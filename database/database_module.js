@@ -7,7 +7,7 @@ const connection = {
     password: process.env.DATABASE_PASSWORD,
     port: process.env.DATABASE_PORT,
     ssl: {
-        rejectUnauthorized: process.env.DATABASE_REJECT_AUTHORIZED
+        rejectUnauthorized: false
     }
 }
 const db = pgp(connection)
