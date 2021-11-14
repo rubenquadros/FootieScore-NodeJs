@@ -49,4 +49,4 @@ jobs:
       
       #Push to main
       - name: Push to Heroku
-        run: git push -f heroku main
+        run: git push heroku main
