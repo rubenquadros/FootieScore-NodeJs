@@ -62,3 +62,16 @@ exports.get_all_competitions = async function() {
         return {code, response_body}
     }
 }
+
+exports.get_user_team_id = async function(id) {
+    try {
+        const text = 'SELECT id as $2:alias FROM user_teams WHERE user_id=$1'
+        const values = [id, 'team_id']
+        let response_body = await db.any(text, values)
+        return response_body
+    } catch(e) {
+        console.log(e)
+        let response_body = null
+        return response_body
+    }
+}

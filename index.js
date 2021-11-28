@@ -24,7 +24,7 @@ function create_server() {
             return
         }
         const response = await login_service.login(req.body.id, req.body.name, req.body.email, req.body.profile_pic)
-        res.status(response).send()
+        res.status(response.response_code).json(response.response_body)
     })
 
     app.get('/competitions', async (req, res) => {
