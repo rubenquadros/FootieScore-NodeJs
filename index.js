@@ -5,6 +5,7 @@ const login_service = require('./api/login')
 const competitions_service = require('./api/all_competitions')
 const fav_team_service = require('./api/fav_team')
 const live_matches_service = require('./api/live_matches')
+const search_teams_service = require('./api/search_teams')
 
 const app = express()
 app.use(express.json())
@@ -24,7 +25,8 @@ function create_server() {
             return
         }
         const response = await login_service.login(req.body.id, req.body.name, req.body.email, req.body.profile_pic)
-        res.status(response.response_code).json(response.response_body)
+        const content_length = Object.keys(response.response_body).length
+        res.set('Content-Length', content_length).status(response.response_code).json(response.response_body)
     })
 
     app.get('/competitions', async (req, res) => {
@@ -33,7 +35,8 @@ function create_server() {
             return
         }
         const response = await competitions_service.get_all_competitions()
-        res.status(response.code).json(response.response_body)
+        const content_length = Object.keys(response.response_body).length
+        res.set('Content-Length', content_length).status(response.code).json(response.response_body)
     })
 
     app.post('/save_team', async (req, res) => {
@@ -51,7 +54,18 @@ function create_server() {
             return
         }
         const response = await live_matches_service.get_live_matches()
-        res.status(response.code).json(response.response_body)
+        const content_length = Object.keys(response.response_body).length
+        res.set('Content-Length', content_length).status(response.code).json(response.response_body)
+    })
+
+    app.get('/search_teams', async (req, res) => {
+        if (!isAuthorized(req.headers[auth_header])) {
+            res.status(401).send()
+            return
+        }
+        const response = await search_teams_service.search_teams(req.query.search_query)
+        const content_length = Object.keys(response).length
+        res.set('Content-Length', content_length).json(response)
     })
 
     app.listen(port, () => {
