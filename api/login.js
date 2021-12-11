@@ -8,7 +8,7 @@ exports.login = async function(id, name, email, profile_pic) {
         return {response_code, response_body}
     } else {
         const team_id =  await db_module.get_user_team_id(id)
-        const response_body = {'user_id': id, 'name': name, 'email':email, 'profile_pic': profile_pic, team_id}
+        const response_body = {'user_id': id, 'name': name, 'email': email, 'profile_pic': profile_pic, team_id}
         return {response_code, response_body}
     }
 }

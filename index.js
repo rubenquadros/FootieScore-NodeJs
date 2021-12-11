@@ -25,8 +25,7 @@ function create_server() {
             return
         }
         const response = await login_service.login(req.body.id, req.body.name, req.body.email, req.body.profile_pic)
-        const content_length = Object.keys(response.response_body).length
-        res.set('Content-Length', content_length).status(response.response_code).json(response.response_body)
+        res.status(response.response_code).json(response.response_body)
     })
 
     app.get('/competitions', async (req, res) => {
@@ -35,8 +34,7 @@ function create_server() {
             return
         }
         const response = await competitions_service.get_all_competitions()
-        const content_length = Object.keys(response.response_body).length
-        res.set('Content-Length', content_length).status(response.code).json(response.response_body)
+        res.status(response.code).json(response.response_body)
     })
 
     app.post('/save_team', async (req, res) => {
@@ -44,7 +42,7 @@ function create_server() {
             res.status(401).send()
             return
         }
-        const response = await fav_team_service.save_team(req.body.id, req.body.user_id, req.body.name)
+        const response = await fav_team_service.save_team(req.body.id, req.body.user_id)
         res.status(response).send()
     })
 
@@ -54,8 +52,7 @@ function create_server() {
             return
         }
         const response = await live_matches_service.get_live_matches()
-        const content_length = Object.keys(response.response_body).length
-        res.set('Content-Length', content_length).status(response.code).json(response.response_body)
+        res.status(response.code).json(response.response_body)
     })
 
     app.get('/search_teams', async (req, res) => {
@@ -64,8 +61,7 @@ function create_server() {
             return
         }
         const response = await search_teams_service.search_teams(req.query.search_query)
-        const content_length = Object.keys(response).length
-        res.set('Content-Length', content_length).json(response)
+        res.json(response)
     })
 
     app.listen(port, () => {
