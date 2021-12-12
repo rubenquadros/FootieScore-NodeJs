@@ -6,6 +6,7 @@ const competitions_service = require('./api/all_competitions')
 const fav_team_service = require('./api/fav_team')
 const live_matches_service = require('./api/live_matches')
 const search_teams_service = require('./api/search_teams')
+const recent_matches_service = require('./api/recent_match_result')
 
 const app = express()
 app.use(express.json())
@@ -34,7 +35,12 @@ function create_server() {
             return
         }
         const response = await competitions_service.get_all_competitions()
-        res.status(response.code).json(response.response_body)
+        if (response.code != 200) {
+            res.status(response.code).send()
+            return
+        } else {
+            res.status(response.code).json(response.response_body)
+        }
     })
 
     app.post('/save_team', async (req, res) => {
@@ -62,6 +68,21 @@ function create_server() {
         }
         const response = await search_teams_service.search_teams(req.query.search_query)
         res.json(response)
+    })
+
+    app.get('/recent_matches', async(req, res) => {
+        if (!isAuthorized(req.headers[auth_header])) {
+            res.status(401).send()
+            return
+        }
+
+        const response = await recent_matches_service.get_recent_matches(req.query.team_id)
+        if (response.code != 200) {
+            res.status(response.code).send()
+            return
+        } else {
+            res.status(response.code).json(response.response_body)
+        }
     })
 
     app.listen(port, () => {

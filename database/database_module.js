@@ -75,3 +75,15 @@ exports.get_user_team_id = async function(id) {
         return response_body
     }
 }
+
+exports.get_teams = async function() {
+    try {
+        const text = 'SELECT * FROM teams'
+        let response = await db.any(text)
+        return response
+    } catch(e) {
+        console.log(e)
+        let response = null
+        return response
+    }
+}
