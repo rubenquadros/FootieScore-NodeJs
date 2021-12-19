@@ -6,7 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ heroku ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -24,6 +24,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
         with:
+          ref: heroku
           fetch-depth: 0
       
       #Login to Heroku
@@ -49,4 +50,4 @@ jobs:
       
       #Push to main
       - name: Push to Heroku
-        run: git push heroku main
+        run: git push -f heroku heroku:main

@@ -2,11 +2,11 @@ const axios = require('axios')
 const db_module = require('../database/database_module')
 
 exports.get_recent_matches = async function(id) {
-    const db_response = await db_module.get_teams()
-    console.log('db_response ' + db_response)
+    const teams = await db_module.get_teams()
+    const all_teams = JSON.stringify({teams})
     if (id == -1) {
         //get random team matches
-        const team_ids = db_response.map(ids => ids.id)
+        const team_ids = teams.map(ids => ids.id)
         if (team_ids == null) {
             let code = 500
             let response_body = null
@@ -20,7 +20,7 @@ exports.get_recent_matches = async function(id) {
                 return {code, response_body}
             } else {
                 let code = api_response.status
-                let response_body = append_team_info(api_response.data, db_response)
+                let response_body = append_team_info(api_response.data, all_teams)
                 return {code, response_body}
             }
         }
@@ -33,7 +33,7 @@ exports.get_recent_matches = async function(id) {
             return {code, response_body}
         } else {
             let code = api_response.status
-            let response_body = append_team_info(api_response.data, db_response)
+            let response_body = append_team_info(api_response.data, all_teams)
             return {code, response_body}
         }
     }
@@ -63,19 +63,28 @@ get_recent_matches_internal = async function(team_id) {
 
 //add crest_url and short_name for teams
 append_team_info = function(api_response, all_teams) {
+    const teams = JSON.parse(all_teams)['teams']
     let updated_response = api_response
     api_response['matches'].forEach(function(matches, index) {
         //add home team details
-        let team_id = matches['homeTeam']['id']
-        let team_details = all_teams.find(o => o.id == team_id)
-        updated_response['matches'][index]['homTeam']['crest_url'] = team_details['crest_url']
-        updated_response['matches'][index]['homeTeam']['short_name'] = team_details['initials']
+        let home_team_id = matches['homeTeam']['id']
+        let home_team_details = teams.filter(function(data) {
+            return data.id == home_team_id
+        })
+        console.log(JSON.stringify(home_team_details))
+        console.log(home_team_details[0])
+        console.log('value ' + home_team_details[0]['crest_url'])
+        updated_response['matches'][index]['homTeam']['crest_url'] = home_team_details[0]['crest_url']
+        updated_response['matches'][index]['homeTeam']['short_name'] = home_team_details[0]['initials']
 
         //add away team details
-        let team_id = matches['awayTeam']['id']
-        let team_details = all_teams.find(o => o.id == team_id)
-        updated_response['matches'][index]['awayTeam']['crest_url'] = team_details['crest_url']
-        updated_response['matches'][index]['awayTeam']['short_name'] = team_details['initials']
+        let away_team_id = matches['awayTeam']['id']
+        let away_team_details = teams.filter(function(data) {
+            return data.id == away_team_id
+        })
+        console.log(JSON.stringify(away_team_details))
+        updated_response['matches'][index]['awayTeam']['crest_url'] = away_team_details[0]['crest_url']
+        updated_response['matches'][index]['awayTeam']['short_name'] = away_team_details[0]['initials']
     })
     return updated_response
 }
