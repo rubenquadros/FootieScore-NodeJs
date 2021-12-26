@@ -7,6 +7,7 @@ const fav_team_service = require('./api/fav_team')
 const live_matches_service = require('./api/live_matches')
 const search_teams_service = require('./api/search_teams')
 const recent_matches_service = require('./api/recent_match_result')
+const user_team_service = require('./api/get_user_team')
 
 const app = express()
 app.use(express.json())
@@ -77,6 +78,21 @@ function create_server() {
         }
 
         const response = await recent_matches_service.get_recent_matches(req.query.team_id)
+        if (response.code != 200) {
+            res.status(response.code).send()
+            return
+        } else {
+            res.status(response.code).json(response.response_body)
+        }
+    })
+
+    app.get('/get_user_team', async(req, res) => {
+        if (!isAuthorized(req.headers[auth_header])) {
+            res.status(401).send()
+            return
+        }
+
+        const response = await user_team_service.get_team_details(req.query.team_id)
         if (response.code != 200) {
             res.status(response.code).send()
             return
