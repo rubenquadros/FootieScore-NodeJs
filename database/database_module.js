@@ -87,3 +87,16 @@ exports.get_teams = async function() {
         return response
     }
 }
+
+exports.get_user_team_details = async function(id) {
+    try {
+        const text = 'SELECT * FROM user_teams WHERE id=$1'
+        const values = [id]
+        let response_body = await db.oneOrNone(text, values)
+        return response_body
+    } catch(e) {
+        console.log(e)
+        let response = null
+        return response
+    }
+}

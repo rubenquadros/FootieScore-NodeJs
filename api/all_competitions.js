@@ -5,7 +5,9 @@ exports.get_all_competitions = async function() {
     let db_response = await db_module.get_all_competitions()
     if (db_response.response_body.length > 0) {
         let code = db_response.code
-        let response_body = db_response.response_body
+        let count = db_response.response_body.length
+        let competitions = db_response.response_body
+        let response_body = {count, competitions}
         return {code, response_body}
     } else {
         const plan_param = 'TIER_ONE'
