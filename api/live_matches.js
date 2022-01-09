@@ -1,4 +1,6 @@
 const axios = require('axios')
+const db_module = require('../database/database_module')
+const append_info_helper = require('./helpers/append_team_info')
 
 exports.get_live_matches = async function() {
     const plan_param = 'TIER_ONE'
@@ -11,9 +13,13 @@ exports.get_live_matches = async function() {
     }
 
     try {
+        const teams = await db_module.get_teams()
+        const all_teams = JSON.stringify({teams})
         let api_response = await axios(config)
         let code = api_response.status
-        let response_body = {'count': api_response.data.count, 'matches': api_response.data.matches} 
+        const api_response_body = api_response.data
+        let updated_api_response = await append_info_helper.append_team_info(JSON.stringify({api_response_body}), all_teams)
+        let response_body = {'count': api_response.data.count, 'matches': updated_api_response.matches} 
         return {code, response_body}
     } catch(e) {
         console.log(e)
